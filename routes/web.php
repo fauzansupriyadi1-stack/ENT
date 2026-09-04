@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 
+use App\Http\Controllers\AuthController;
+
 // Public Landing Page Route
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/kategori/{category}', [HomeController::class, 'index'])->name('category.show');
@@ -11,8 +13,13 @@ Route::get('/kategori/{category}', [HomeController::class, 'index'])->name('cate
 // Public News Detail Route
 Route::get('/berita/{slug}', [HomeController::class, 'show'])->name('news.detail');
 
-// Admin Panel Routes
-Route::prefix('admin')->group(function () {
+// Authentication Routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Admin Panel Routes (Protected)
+Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.dashboard');
 
     // Post Berita (Create)

@@ -65,13 +65,28 @@ class AdminController extends Controller
             'data' => $catData
         ];
 
+        // Yearly chart data for last 5 years
+        $currentYear = now()->year;
+        $yearlyLabels = [];
+        $yearlyCounts = [];
+        for ($i = 4; $i >= 0; $i--) {
+            $year = $currentYear - $i;
+            $yearlyLabels[] = (string)$year;
+            $yearlyCounts[] = Article::whereYear('created_at', $year)->count();
+        }
+
+        $chartYearly = [
+            'labels' => $yearlyLabels,
+            'data' => $yearlyCounts
+        ];
+
         // Recent articles list
         $recentArticles = Article::with('category', 'user')->latest()->take(5)->get();
 
         // Hero Slots filled summary count
         $filledSlotsCount = HeroSlot::whereNotNull('article_id')->count();
 
-        return view('admin.dashboard', compact('stats', 'chartMonthly', 'chartDaily', 'chartCategory', 'recentArticles', 'categories', 'filledSlotsCount'));
+        return view('admin.dashboard', compact('stats', 'chartMonthly', 'chartDaily', 'chartCategory', 'chartYearly', 'recentArticles', 'categories', 'filledSlotsCount'));
     }
 
     /**
@@ -102,12 +117,7 @@ class AdminController extends Controller
             $imagePath = $request->file('image')->store('articles', 'public');
         }
 
-        $user = User::first() ?? User::create([
-            'name' => 'Fauzan Admin',
-            'email' => 'admin@fznnews.com',
-            'password' => bcrypt('password'),
-            'role' => 'superadmin'
-        ]);
+        $user = auth()->user();
 
         $article = Article::create([
             'category_id' => $request->category_id,
@@ -144,10 +154,19 @@ class AdminController extends Controller
     /**
      * 4. Kelola Berita Table Page (/admin/kelola-berita)
      */
-    public function manageNews()
+    public function manageNews(Request $request)
     {
-        $articles = Article::with('category', 'user')->latest()->paginate(10);
-        return view('admin.kelola-berita', compact('articles'));
+        $query = Article::with('category', 'user')->latest();
+        
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        $articles = $query->paginate(10)->appends($request->all());
+        $categories = Category::all();
+        $selectedCategory = $request->category_id;
+
+        return view('admin.kelola-berita', compact('articles', 'categories', 'selectedCategory'));
     }
 
     /**

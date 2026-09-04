@@ -661,6 +661,50 @@ body.admin-body {
     flex-wrap: wrap;
 }
 
+/* Custom styling for Laravel Bootstrap Pagination */
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 5px;
+    margin: 20px 0 0 0;
+    padding: 0;
+    justify-content: center;
+}
+
+.pagination .page-item .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    background-color: #ffffff;
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text-dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.pagination .page-item:not(.disabled) .page-link:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--admin-primary);
+    color: #ffffff;
+    border-color: var(--admin-primary);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #94a3b8;
+    background-color: #f8fafc;
+    cursor: not-allowed;
+}
+
 /* ============================================
    RESPONSIVE BREAKPOINTS
    ============================================ */

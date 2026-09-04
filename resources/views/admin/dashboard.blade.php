@@ -502,21 +502,21 @@
 {{-- ─── STAT CARDS ───────────────────────────────────────── --}}
 <section class="admin-stats">
     <div class="stat-card">
-        <div class="stat-icon-wrap">📅</div>
+        <div class="stat-icon-wrap">📝</div>
         <div class="stat-info">
             <div class="stat-count" data-count="{{ $stats['today'] }}">0</div>
             <div class="stat-label">Berita Diposting <strong>Hari Ini</strong></div>
         </div>
-        <span class="stat-badge badge-up">↑ +15%</span>
+        <span class="stat-badge badge-neutral">Hari Ini</span>
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon-wrap">📆</div>
+        <div class="stat-icon-wrap">📅</div>
         <div class="stat-info">
             <div class="stat-count" data-count="{{ $stats['this_month'] }}">0</div>
             <div class="stat-label">Berita Diposting <strong>Bulan Ini</strong></div>
         </div>
-        <span class="stat-badge badge-up">↑ +24%</span>
+        <span class="stat-badge badge-neutral">Bulan Ini</span>
     </div>
 
     <div class="stat-card">
@@ -525,7 +525,7 @@
             <div class="stat-count" data-count="{{ $stats['this_year'] }}">0</div>
             <div class="stat-label">Berita Diposting <strong>Tahun Ini</strong></div>
         </div>
-        <span class="stat-badge badge-neutral">Total 2026</span>
+        <span class="stat-badge badge-neutral">Tahun {{ date('Y') }}</span>
     </div>
 </section>
 
@@ -576,46 +576,22 @@
             <a href="{{ route('admin.kelola-berita') }}">Lihat Semua →</a>
         </div>
         <ul class="activity-list">
-            <li class="activity-item">
-                <span class="activity-dot dot-green"></span>
-                <div class="activity-text">
-                    <strong>Judul Berita Utama Dari Berita Yang Ingin Diberikan</strong>
-                    <small>Diposting oleh Author FZN · 2 menit lalu</small>
-                </div>
-                <span class="activity-badge ab-published">Published</span>
-            </li>
-            <li class="activity-item">
-                <span class="activity-dot dot-blue"></span>
-                <div class="activity-text">
-                    <strong>Judul Berita Sekunder Dari Berita Yang Ingin Diberikan</strong>
-                    <small>Diposting oleh Author FZN · 1 jam lalu</small>
-                </div>
-                <span class="activity-badge ab-published">Published</span>
-            </li>
-            <li class="activity-item">
-                <span class="activity-dot dot-amber"></span>
-                <div class="activity-text">
-                    <strong>Berita Teknologi Terbaru Dari Dunia Digital</strong>
-                    <small>Dibuat oleh Author FZN · 3 jam lalu</small>
-                </div>
-                <span class="activity-badge ab-draft">Draft</span>
-            </li>
-            <li class="activity-item">
-                <span class="activity-dot dot-green"></span>
-                <div class="activity-text">
-                    <strong>Judul Berita Olahraga Dari Berita Yang Ingin Diberikan</strong>
-                    <small>Diposting oleh Author FZN · 5 jam lalu</small>
-                </div>
-                <span class="activity-badge ab-published">Published</span>
-            </li>
-            <li class="activity-item">
-                <span class="activity-dot dot-amber"></span>
-                <div class="activity-text">
-                    <strong>Berita Ekonomi dan Keuangan Terkini</strong>
-                    <small>Dibuat oleh Author FZN · kemarin</small>
-                </div>
-                <span class="activity-badge ab-draft">Draft</span>
-            </li>
+            @forelse($recentArticles as $article)
+                <li class="activity-item">
+                    <span class="activity-dot {{ $article->status === 'published' ? 'dot-green' : 'dot-amber' }}"></span>
+                    <div class="activity-text">
+                        <strong>{{ $article->title }}</strong>
+                        <small>Diposting oleh {{ $article->user ? $article->user->name : 'Admin' }} · {{ $article->created_at ? $article->created_at->diffForHumans() : '' }}</small>
+                    </div>
+                    <span class="activity-badge {{ $article->status === 'published' ? 'ab-published' : 'ab-draft' }}">{{ ucfirst($article->status) }}</span>
+                </li>
+            @empty
+                <li class="activity-item" style="border:none;">
+                    <div class="activity-text" style="text-align:center; padding:20px 0;">
+                        <small>Belum ada aktivitas berita baru.</small>
+                    </div>
+                </li>
+            @endforelse
         </ul>
     </div>
 
@@ -659,27 +635,22 @@
     <h2>📊 Produktivitas Per Kategori</h2>
     <div class="progress-list">
         @php
-            $catProgress = [
-                ['label' => 'National',    'value' => 35, 'max' => 35, 'color' => '#1c4424'],
-                ['label' => 'Ekonomi',     'value' => 25, 'max' => 35, 'color' => '#2e6b3c'],
-                ['label' => 'Tekno',       'value' => 20, 'max' => 35, 'color' => '#429b57'],
-                ['label' => 'Olahraga',    'value' => 15, 'max' => 35, 'color' => '#62c47a'],
-                ['label' => 'Hiburan',     'value' => 12, 'max' => 35, 'color' => '#8fe0a2'],
-                ['label' => 'Gaya Hidup',  'value' => 8,  'max' => 35, 'color' => '#c2f3cc'],
-            ];
+            $colors = ['#1c4424', '#2e6b3c', '#429b57', '#62c47a', '#8fe0a2', '#c2f3cc'];
+            $maxArticles = $categories->max('articles_count') ?: 1;
         @endphp
-        @foreach($catProgress as $cat)
-        <div class="progress-item">
-            <div class="progress-meta">
-                <span>{{ $cat['label'] }}</span>
-                <strong>{{ $cat['value'] }} berita</strong>
+        @foreach($categories as $index => $cat)
+            @php $color = $colors[$index % count($colors)]; @endphp
+            <div class="progress-item">
+                <div class="progress-meta">
+                    <span>{{ $cat->name }}</span>
+                    <strong>{{ $cat->articles_count }} berita</strong>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill"
+                         data-width="{{ round(($cat->articles_count / $maxArticles) * 100) }}"
+                         style="background: {{ $color }};"></div>
+                </div>
             </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill"
-                     data-width="{{ round($cat['value'] / $cat['max'] * 100) }}"
-                     style="background: {{ $cat['color'] }};"></div>
-            </div>
-        </div>
         @endforeach
     </div>
 </section>
@@ -698,8 +669,8 @@ const dailyData = {
     data:   {!! json_encode($chartDaily['data']) !!}
 };
 const yearlyData = {
-    labels: ['2022', '2023', '2024', '2025', '2026'],
-    data:   [650, 890, 1120, 1250, 1280]
+    labels: {!! json_encode($chartYearly['labels']) !!},
+    data:   {!! json_encode($chartYearly['data']) !!}
 };
 const categoryData = {
     labels: {!! json_encode($chartCategory['labels']) !!},

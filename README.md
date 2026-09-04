@@ -144,9 +144,11 @@ Jika ingin menjalankan service secara manual di terminal terpisah:
 Setelah server berhasil dijalankan, buka browser dan akses URL berikut:
 
 - **Halaman Utama (Public Portal)**: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- **Panel Admin**: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+- **Login Admin**: [http://127.0.0.1:8000/login](http://127.0.0.1:8000/login)
+- **Panel Admin**: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin) (Membutuhkan akses otentikasi/login)
 
 ### 🔑 Akun Admin Default (Database Seeder)
+Gunakan kredensial berikut pada halaman Login untuk mengakses Dashboard:
 - **Email**: `admin@fznnews.com`
 - **Password**: `password`
 - **Role**: `superadmin`

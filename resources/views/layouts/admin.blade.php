@@ -46,9 +46,6 @@
                     <li class="{{ request()->routeIs('admin.kelola-berita') ? 'active' : '' }}">
                         <a href="{{ route('admin.kelola-berita') }}">📰 Kelola Berita</a>
                     </li>
-                    <li><a href="#">📁 Kategori Berita</a></li>
-                    <li><a href="#">👤 Pengguna Admin</a></li>
-                    <li><a href="#">⚙️ Pengaturan</a></li>
                 </ul>
             </nav>
 
@@ -74,12 +71,18 @@
                     @if (!request()->routeIs('admin.post-berita'))
                         <a href="{{ route('admin.post-berita') }}" class="btn-primary">+ Post Berita</a>
                     @endif
-                    <div class="admin-profile">
-                        <div class="admin-avatar">A</div>
-                        <div class="admin-info">
-                            <strong>Fauzan Admin</strong>
-                            <span>Super Admin</span>
+                    <div class="admin-profile" style="display: flex; align-items: center; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="admin-avatar">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</div>
+                            <div class="admin-info">
+                                <strong>{{ auth()->user()->name ?? 'Admin' }}</strong>
+                                <span>{{ ucfirst(auth()->user()->role ?? 'Admin') }}</span>
+                            </div>
                         </div>
+                        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="btn-action btn-delete" style="padding: 6px 12px; font-size: 0.75rem;">Logout</button>
+                        </form>
                     </div>
                 </div>
             </header>

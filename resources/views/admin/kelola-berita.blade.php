@@ -15,6 +15,21 @@
         <a href="{{ route('admin.post-berita') }}" class="btn-primary">+ Post Berita Baru</a>
     </div>
 
+    <div style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <form action="{{ route('admin.kelola-berita') }}" method="GET" style="display:flex; gap:10px; align-items:center;">
+            <label for="category_id" style="font-weight:600; font-size:0.9rem;">Filter Berdasarkan Kategori:</label>
+            <select name="category_id" id="category_id" class="form-control" style="max-width:300px; padding:8px; border-radius:5px; border:1px solid #ccc;" onchange="this.form.submit()">
+                <option value="">-- Semua Kategori --</option>
+                @foreach ($categories as $cat)
+                    <option value="{{ $cat->id }}" {{ $selectedCategory == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                @endforeach
+            </select>
+            @if($selectedCategory)
+                <a href="{{ route('admin.kelola-berita') }}" style="font-size: 0.85rem; color: #ef4444; text-decoration: none;">Reset Filter</a>
+            @endif
+        </form>
+    </div>
+
     @if (session('success'))
         <div style="background:#d1fae5; border:1px solid #10b981; color:#065f46; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-weight:700; font-size:0.85rem;">
             ✅ {{ session('success') }}
@@ -25,7 +40,7 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>Judul Berita</th>
                     <th>Kategori</th>
                     <th>Author</th>
@@ -38,7 +53,7 @@
             <tbody>
                 @foreach ($articles as $news)
                     <tr>
-                        <td>#{{ $news->id }}</td>
+                        <td>{{ $articles->firstItem() + $loop->index }}</td>
                         <td><strong>{{ $news->title }}</strong> @if($news->is_breaking) <span style="background:#ef4444; color:#fff; font-size:0.6rem; padding:2px 6px; border-radius:3px;">BREAKING</span> @endif</td>
                         <td><span class="badge-cat">{{ $news->category ? $news->category->name : '-' }}</span></td>
                         <td>{{ $news->user ? $news->user->name : 'Admin' }}</td>
