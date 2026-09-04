@@ -189,6 +189,12 @@ a {
     right: -6px;
 }
 
+@media (max-width: 768px) {
+    .nav-scroll-btn.visible {
+        display: none !important;
+    }
+}
+
 .header-box__nav-link {
     color: var(--color-white);
     font-size: 0.95rem;
@@ -264,7 +270,13 @@ a {
 }
 
 .breaking-scroll-btn--right {
-    right: 4px;
+    right: 0;
+}
+
+@media (max-width: 768px) {
+    .breaking-scroll-btn.visible {
+        display: none !important;
+    }
 }
 
 .breaking-bar__container {
